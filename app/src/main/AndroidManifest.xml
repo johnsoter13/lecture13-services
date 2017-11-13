@@ -17,9 +17,6 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".CountingService"/>
-        <service android:name=".MusicService"/>
-
     </application>
 
 </manifest>
