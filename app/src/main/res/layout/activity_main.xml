@@ -16,7 +16,7 @@
         android:textSize="20sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="handleStart"
+        android:onClick="handleStartCount"
         />
 
     <Button
@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/btnStart"
-        android:onClick="handleStop"
+        android:onClick="handleStopCount"
         />
 
     <LinearLayout
