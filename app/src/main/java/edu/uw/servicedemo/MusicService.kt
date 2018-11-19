@@ -59,6 +59,8 @@ class MusicService : Service(), MediaPlayer.OnCompletionListener {
 
         mediaPlayer!!.start()
 
+        // what service should do if it gets destroyed
+        // When the service is destroyed it should not be recreated
         return Service.START_NOT_STICKY
     }
 

@@ -14,6 +14,8 @@ class CountingService : IntentService("CountingService") {
     private val TAG = "CountingService"
 
     private var count: Int = 0
+    // runs code on a different thread
+    // default: UI thread
     private lateinit var mHandler: Handler
 
     override fun onCreate() {
@@ -22,6 +24,7 @@ class CountingService : IntentService("CountingService") {
         super.onCreate()
     }
 
+    // holds intents
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.v(TAG, "Intent received")
         Toast.makeText(this, "Intent received", Toast.LENGTH_SHORT).show()
@@ -31,9 +34,11 @@ class CountingService : IntentService("CountingService") {
     override fun onHandleIntent(intent: Intent?) {
         Log.v(TAG, "Handling Intent")
 
+        // do in background work
         count = 1
         while (count <= 10) {
             Log.v(TAG, "Count: $count")
+            // runs code on UI thread
             mHandler.post {
                 Toast.makeText(this@CountingService, "Count: $count", Toast.LENGTH_SHORT).show()
                 Log.v(TAG, "" + count)

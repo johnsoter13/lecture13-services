@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
 //        for(count in 0..10){
 //            Log.v(TAG, "Count: $count");
 //            try {
+                    // Counting to 10 slowly
 //                Thread.sleep(2000); //sleep for 2 seconds
 //            } catch (e: InterruptedException) {
 //                Thread.currentThread().interrupt();
@@ -44,12 +45,18 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
 
 
         //using java thread
+        // background thread
 //        val countThread = Thread(CountRunner());
 //        countThread.start();
 
         //using async task
 //        val task = CountTask();
 //        task.execute(1, 5);
+
+
+        //Two types of Services
+        // 1. Intent Service: Controlled through the sending of Intents
+        // 2. Bind Service: Client gets bound to service Allows you to call service methods directly
 
         //using service
         startService(Intent(this@MainActivity, CountingService::class.java))
@@ -78,16 +85,22 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
     }
 
     //AsyncTask version
+    // good for doing a task one time
     inner class CountTask : AsyncTask<Int, Int, String>() {
 
+        // setup work before background task starts
+        // runs on UI thread
         override fun onPreExecute() {
             super.onPreExecute()
             Toast.makeText(this@MainActivity, "Start counting!", Toast.LENGTH_SHORT).show()
         }
 
+        // What do I want to do in the background?
+        // runs on background thread
         override fun doInBackground(vararg bounds: Int?): String {
             for (count in bounds[0]!!..bounds[1]!!) {
                 Log.v(TAG, "Count: $count")
+                // executes onProgressUpdate function
                 publishProgress(count)
                 try {
                     Thread.sleep(2000) //sleep for 2 seconds
@@ -95,15 +108,19 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
                     Thread.currentThread().interrupt()
                 }
             }
-
+            // this gets passed to onPostExecute function
             return "All done!"
         }
 
+        // Everytime we loop this function is called
+        // runs on UI THREAD
         override fun onProgressUpdate(vararg count: Int?) {
             super.onProgressUpdate(*count) //spread operator
             Toast.makeText(this@MainActivity, "Count: ${count[0]}", Toast.LENGTH_SHORT).show()
         }
 
+        // Result of doInBackground
+        // Runs on UI Thread
         override fun onPostExecute(result: String) {
             super.onPostExecute(result)
             Toast.makeText(this@MainActivity, result, Toast.LENGTH_SHORT).show()
@@ -113,9 +130,11 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
 
 
     /* Media controls */
+    // start music service
     fun playMedia(v: View) {
         startService(Intent(this, MusicService::class.java))
     }
+
 
     fun pauseMedia(v: View) {
         if (mServiceBound) {
