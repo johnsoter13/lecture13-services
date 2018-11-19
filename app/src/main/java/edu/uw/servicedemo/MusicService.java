@@ -1,8 +1,11 @@
 package edu.uw.servicedemo;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Binder;
@@ -16,6 +19,7 @@ import android.util.Log;
  */
 public class MusicService extends Service implements MediaPlayer.OnCompletionListener {
 
+    private static final String NOTIFICATION_CHANNEL_ID = "my_channel_01"; //channel ID
     private static final String TAG = "Music";
 
     private String songName = "The Entertainer";
@@ -41,13 +45,21 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
                 new Intent(getApplicationContext(), MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification notification = new NotificationCompat.Builder(this)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            //Orea support
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Demo channel", NotificationManager.IMPORTANCE_LOW);
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        Notification notification = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.ic_media_play)
                 .setContentTitle("Music Player")
                 .setContentText("Now playing: "+songName)
                 .setContentIntent(pendingIntent)
                 .setOngoing(true) //cannot be dismissed by the user
                 .build();
+
         startForeground(NOTIFICATION_ID, notification); //make this a foreground service!
 
         mediaPlayer.start();
